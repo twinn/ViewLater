@@ -6,6 +6,17 @@
 
 
 //example of using a message handler from the inject scripts
+window.saveVideoData = function(tab) {
+  var url = tab.url;
+  $.ajax("http://www.youtube.com/oembed?url=" + url + "&format=json").done(function(response) {
+    this.videos = JSON.parse(localStorage.getItem('videos'));
+    if(this.videos == null) {
+      this.videos = new Array();
+    }
+    this.videos.push(response);
+    localStorage.setItem('videos', JSON.stringify(this.videos));
+  });
+};
 chrome.extension.onMessage.addListener(
   function(request, sender, sendResponse) {
   	chrome.pageAction.show(sender.tab.id);
@@ -13,6 +24,7 @@ chrome.extension.onMessage.addListener(
   });
 chrome.browserAction.onClicked.addListener(
     function(tab) {
-      alert("Clicked!");
+      saveVideoData(tab);
     }
 );
+
